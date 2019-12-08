@@ -1,2 +1,9 @@
 ---
 # vars file for iac_ansible-role-apache
+
+packages:
+  - httpd
+
+httpd_conf_dir: "/etc/httpd/conf.d/"
+httpd_document_root: "/var/www/html/customapp"
+httpd_index_file: "index.html"

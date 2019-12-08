@@ -1,5 +1,5 @@
-import pytest
 
 
-def mokup_test(host):
-    assert True
+def test_selinux_is_permissive(host):
+    cmd = host.run("curl http://localhost | grep 'customos")
+    assert cmd.rc == 0

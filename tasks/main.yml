@@ -1,6 +1,28 @@
 ---
 # tasks file for iac_ansible-role-apache
 
-- name: Mockup
-  debug:
-    msg: "This role is empty!"
+- name: Install packages
+  dnf:
+    name: "{{ packages }}"
+    state: present
+
+- name: "Copy httpd configuration file "
+  template:
+    src: "httpd-customos.conf.j2"
+    dest: "{{ httpd_conf_dir }}"
+
+- name: Create web root directory
+  file:
+    path: "{{ httpd_document_root }}"
+    state: directory
+
+- name: "Copy html file"
+  file:
+    src: "{{ httpd_index_file }}"
+    dest: "{{ httpd_document_root }}/{{ httpd_index_file }}"
+
+- name: Restart and enable httpd service
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
