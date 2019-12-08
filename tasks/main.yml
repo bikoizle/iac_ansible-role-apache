@@ -8,8 +8,8 @@
 
 - name: "Copy httpd configuration file "
   template:
-    src: "httpd-customos.conf.j2"
-    dest: "{{ httpd_conf_dir }}"
+    src: "{{ httpd_conf_template }}"
+    dest: "{{ httpd_conf_dir }}/{{ httpd_conf_file }}"
 
 - name: Create web root directory
   file:
