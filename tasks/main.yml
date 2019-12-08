@@ -1,0 +1,6 @@
+---
+# tasks file for iac_ansible-role-apache
+
+- name: Mockup
+  debug:
+    msg: "This role is empty!"
