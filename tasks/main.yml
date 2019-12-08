@@ -17,8 +17,8 @@
     state: directory
 
 - name: "Copy html file"
-  file:
-    src: "files/{{ httpd_index_file }}"
+  copy:
+    src: "{{ httpd_index_file }}"
     dest: "{{ httpd_document_root }}/{{ httpd_index_file }}"
 
 - name: Restart and enable httpd service
