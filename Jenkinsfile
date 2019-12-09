@@ -170,15 +170,13 @@ node {
                vm_name: "$OS_VM_NAME",
                timeout: "$OS_VM_BUILD_TIMEOUT",
            ])
-      }
+     }
 
-      if (BUILD_STATUS == 1){
+     if (BUILD_STATUS == 1){
 
-           echo "Build finished with errors!"
+         echo "Build finished with errors!"
 
-         }
-
-      }
+       }
 
     }
 
