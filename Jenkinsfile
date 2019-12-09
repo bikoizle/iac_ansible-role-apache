@@ -129,6 +129,11 @@ node {
         }
     
         stage("Test Playbook"){
+
+         echo "WORKSPACE: ${env.WORKSPACE}"
+         echo "JENKINS_HOME: ${env.JENKINS_HOME}"
+         echo "JOB_NAME: ${env.JOB_NAME}"
+         echo "JOB_BASE_NAME: ${env.JOB_BASE_NAME}"
     
          echo "Removing old VM IP address ssh fingerprint"
     
