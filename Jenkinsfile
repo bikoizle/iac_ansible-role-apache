@@ -133,7 +133,7 @@ node {
           OS_VM_IP_ADDRESS = OS_VM_INFO['accessIPv4'][0]
 
           sh "mkdir -p $ANSIBLE_WORKSPACE_DIR/roles"
-          sh "cp -r ${env.WORKSPACE}@scripts $ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}"
+          sh "cp -r ${env.WORKSPACE}@script $ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}"
 
           if (fileExists("$ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}/.requirements.yml")) {
 
