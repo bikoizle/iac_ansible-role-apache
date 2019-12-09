@@ -32,6 +32,10 @@ def OS_VM_FLAVOUR = "lab.small";
 def OS_VM_NET = "private_network";
 
 def OS_VM_INFO;
+def OS_VM_IP_ADDRESS;
+
+def ANSIBLE_WORKSPACE_DIR = "ansible_workspace";
+def ANSIBLE_USER = "root";
 
 node {
 
@@ -122,32 +126,49 @@ node {
 
         }
 
+        stage("Prepare Ansible workspace")
+        {
+          echo "Preparing Ansible workspace"
+
+          OS_VM_IP_ADDRESS = OS_VM_INFO['accessIPv4'][0]
+
+          sh "mkdir -p $ANSIBLE_WORKSPACE_DIR/roles"
+          sh "cp -r ${env.WORKSPACE}@scripts $ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}"
+
+          if (fileExists("$ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}/.requirements.yml")) {
+
+            echo "Downloading role dependencies with Ansible Galaxy"
+
+            sh "ansible-galaxy install -r $ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}/.requirements.yml -p $ANSIBLE_WORKSPACE_DIR/roles -f"
+
+          }
+
+          sh "cp $ANSIBLE_WORKSPACE_DIR/roles/${env.JOB_BASE_NAME}/tests/* $ANSIBLE_WORKSPACE_DIR"
+          sh "sed -i 's|localhost|$OS_VM_IP_ADDRESS|g' $ANSIBLE_WORKSPACE_DIR/inventory $ANSIBLE_WORKSPACE_DIR/test.yml"
+
+        }
+
         stage("Run Playbook"){
 
-          echo "Let's run!"
+          echo "Running test playbook"
+
+          sh "ansible-playbook -u $ANSIBLE_USER -i $ANSIBLE_WORKSPACE_DIR/inventory $ANSIBLE_WORKSPACE_DIR/test.yml"
 
         }
     
         stage("Test Playbook"){
 
-         echo "WORKSPACE: ${env.WORKSPACE}"
-         echo "JENKINS_HOME: ${env.JENKINS_HOME}"
-         echo "JOB_NAME: ${env.JOB_NAME}"
-         echo "JOB_BASE_NAME: ${env.JOB_BASE_NAME}"
-    
          echo "Removing old VM IP address ssh fingerprint"
-    
-         vm_ip_address = OS_VM_INFO['accessIPv4'][0]
 
-         sh "ssh-keygen -R $vm_ip_address"
+         sh "ssh-keygen -R $OS_VM_IP_ADDRESS"
     
-         echo "Running flake8 tests"
+         echo "Checking pytests scripts with flake8"
     
-         sh "flake8 tests"
+         sh "flake8 $ANSIBLE_WORKSPACE_DIR/*.py"
     
          echo "Running role tests with pytest"
     
-         sh "py.test -v --hosts='ssh://root@$vm_ip_address' tests/*.py"
+         sh "py.test -v --hosts='ssh://$ANSIBLE_USER@$OS_VM_IP_ADDRESS' $ANSIBLE_WORKSPACE_DIR/*.py"
     
         }
 
