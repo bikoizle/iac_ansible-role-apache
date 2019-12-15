@@ -1,0 +1,28 @@
+---
+# tasks file for iac_ansible-role-apache
+
+- name: Install packages
+  dnf:
+    name: "{{ packages }}"
+    state: present
+
+- name: "Copy httpd configuration file "
+  template:
+    src: "{{ httpd_conf_template }}"
+    dest: "{{ httpd_conf_dir }}/{{ httpd_conf_file }}"
+
+- name: Create web root directory
+  file:
+    path: "{{ httpd_document_root }}"
+    state: directory
+
+- name: "Copy html file"
+  copy:
+    src: "{{ httpd_index_file }}"
+    dest: "{{ httpd_document_root }}/{{ httpd_index_file }}"
+
+- name: Restart and enable httpd service
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

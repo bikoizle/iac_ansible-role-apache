@@ -1,0 +1,2 @@
+- src: https://github.com/bikoizle/iac_ansible-role-server.git
+  version: "0.1.1"
