@@ -1,0 +1,16 @@
+<LocationMatch "^/+$">
+    Options -Indexes
+    ErrorDocument 403 /.noindex.html
+</LocationMatch>
+
+<VirtualHost _default_:80>
+    DocumentRoot {{ httpd_document_root }}
+    CustomLog "logs/default-vhost.log" combined
+</VirtualHost>
+
+<Directory {{ httpd_document_root }}>
+    AllowOverride None
+    Require all granted
+</Directory>
+
+Alias /.noindex.html /usr/share/httpd/noindex/index.html
